@@ -58,6 +58,7 @@
 
     ```bash
     cd SPDK-Benchmark
+    export LD_LIBRARY_PATH=spdk/build/lib:spdk/dpdk/build/lib
     make
     ```
 

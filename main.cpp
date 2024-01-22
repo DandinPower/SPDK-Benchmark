@@ -1,65 +1,85 @@
-#include <spdk_engine.h>
+// #include <spdk_engine.h>
+#include <phison_engine.h>
+
+#include <iostream>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <cstring>
+#include <chrono>
+#include <cmath>
+#include <linux/types.h>
+#include <linux/nvme_ioctl.h>
+#include <cassert>
+
+#define NVME_SECTOR_SIZE 512
+#define MB 1024 * 1024
+
+typedef struct SingleRecord {
+    double writeLatency;
+    double readLatency;
+} SingleRecord_t;
+
+size_t get_aligned_size(size_t alignment, size_t size) {
+    assert((alignment & (alignment - 1)) == 0);  // Ensure alignment is a power of 2
+    return (size + alignment - 1) & ~(alignment - 1);
+}
+
+void check_error(bool condition, const std::string &msg) {
+    if (condition) {
+        std::cerr << msg << ": " << std::strerror(errno) << std::endl;
+        std::exit(1);
+    }
+}
+
+void generate_random_data(char* buffer, size_t buffer_size) {
+    for (size_t i = 0; i < buffer_size; ++i) {
+        buffer[i] = rand() % 256;
+    }
+}
 
 int
 main(int argc, char **argv)
 {
-	int rc;
-	struct spdk_env_opts opts;
+	double totalWriteLatency = 0.0;
+    double totalReadLatency = 0.0;
 
-	/*
-	 * SPDK relies on an abstraction around the local environment
-	 * named env that handles memory allocation and PCI device operations.
-	 * This library must be initialized first.
-	 *
-	 */
-	spdk_env_opts_init(&opts);
-	rc = parse_args(argc, argv, &opts);
-	if (rc != 0) {
-		return rc;
+	size_t bufferSize = 33554432;
+	size_t bufferSizeAligned = get_aligned_size(NVME_SECTOR_SIZE , bufferSize);
+
+    // Allocate aligned memory for write and read
+    char *writeBuffer, *readBuffer;
+    check_error(posix_memalign((void **)&writeBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for write_data");
+    check_error(posix_memalign((void **)&readBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for read_data");
+
+	generate_random_data(writeBuffer, bufferSizeAligned);
+	for (int i=0; i < 32; i++) {
+
+		auto startWrite = std::chrono::high_resolution_clock::now();
+		int ret = processor(writeBuffer, 1, 0, bufferSizeAligned);
+		auto endWrite = std::chrono::high_resolution_clock::now();
+
+		auto startRead = std::chrono::high_resolution_clock::now();
+		ret = processor(readBuffer, 0, 0, bufferSizeAligned);
+		auto endRead = std::chrono::high_resolution_clock::now();
+
+		std::chrono::duration<double> writeTime = endWrite - startWrite;
+		std::chrono::duration<double> readTime = endRead - startRead;
+		size_t writeSpeedMBs = std::round(static_cast<double>(bufferSize) / writeTime.count() / static_cast<double>(MB));
+		size_t readSpeedMBs = std::round(static_cast<double>(bufferSize) / readTime.count() / static_cast<double>(MB));
+		std::cout << "Write speed: " << writeSpeedMBs << " MB/s" << std::endl;
+		std::cout << "Read speed: " << readSpeedMBs << " MB/s" << std::endl;
+
+		// Compare write and read data
+		if (memcmp(writeBuffer, readBuffer, bufferSizeAligned) == 0) {
+			std::cout << "Data is the same" << std::endl;
+		} else {
+			std::cout << "Data is different" << std::endl;
+		}
 	}
 
-	opts.name = "hello_world";
-	if (spdk_env_init(&opts) < 0) {
-		fprintf(stderr, "Unable to initialize SPDK env\n");
-		return 1;
-	}
-
-	printf("Initializing NVMe Controllers\n");
-
-	if (g_vmd && spdk_vmd_init()) {
-		fprintf(stderr, "Failed to initialize VMD."
-			" Some NVMe devices can be unavailable.\n");
-	}
-
-	/*
-	 * Start the SPDK NVMe enumeration process.  probe_cb will be called
-	 *  for each NVMe controller found, giving our application a choice on
-	 *  whether to attach to each controller.  attach_cb will then be
-	 *  called for each controller after the SPDK NVMe driver has completed
-	 *  initializing the controller we chose to attach.
-	 */
-	rc = spdk_nvme_probe(&g_trid, NULL, probe_cb, attach_cb, NULL);
-	if (rc != 0) {
-		fprintf(stderr, "spdk_nvme_probe() failed\n");
-		rc = 1;
-		goto exit;
-	}
-
-	if (TAILQ_EMPTY(&g_controllers)) {
-		fprintf(stderr, "no NVMe controllers found\n");
-		rc = 1;
-		goto exit;
-	}
-
-	printf("Initialization complete.\n");
-	hello_world();
-	cleanup();
-	if (g_vmd) {
-		spdk_vmd_fini();
-	}
-
-exit:
-	cleanup();
-	spdk_env_fini();
-	return rc;
+	// Free allocated memory
+	free(writeBuffer);
+	free(readBuffer);
+	return 0;
 }
