@@ -1,0 +1,8 @@
+#pragma once
+
+#define BUFFER_SIZE 134217728
+#define CHUNK_SIZE 33554432 / 8 // 4MB
+// #define CHUNK_SIZE 33554432 / 4 // 8MB
+// #define CHUNK_SIZE 33554432 / 2 // 16MB
+// #define CHUNK_SIZE 33554432 // 32MB
+// #define CHUNK_SIZE 33554432 * 2 // 64MB

@@ -2,7 +2,7 @@
  *   Copyright (C) 2016 Intel Corporation.
  *   All rights reserved.
  */
-
+#pragma once
 #include "spdk/stdinc.h"
 
 #include "spdk/nvme.h"

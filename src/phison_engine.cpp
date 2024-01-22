@@ -161,13 +161,7 @@ static void _io_helper(
     logger.reset();
 
     TAILQ_FOREACH(ns_entry, &g_namespaces, link) {
-
-        logger.startTest("allocate io qpair");
-
         allocate_io_qpair(ns_entry);
-
-        logger.endTest("allocate io qpair");
-
         __u16 submit_task = 0;
         char *charBuffer = reinterpret_cast<char *>(buffer);
         int ret = 0;
@@ -250,6 +244,7 @@ static void _io_helper(
         }
 
         for (auto i = 0; i < submit_task; i++) {
+            logger.startTest("task:" + std::to_string(i) + " waiting I/O");
             while (!spdk_sequence_queue_local[i]->is_completed) {
                 ret = spdk_nvme_qpair_process_completions(ns_entry->qpair, 0);
                 if (ret < 0) {
@@ -258,6 +253,7 @@ static void _io_helper(
                     complete_task += ret;
                 }
             }
+            logger.endTest("task:" + std::to_string(i) + " waiting I/O");
             if (op == 1) {
                 /*
                  * The write I/O has completed.  Free the buffer associated with
@@ -282,9 +278,7 @@ static void _io_helper(
             free(spdk_sequence_queue_local[i]);
             logger.endTest("task:" + std::to_string(i) + " doing I/O");
         }
-        logger.startTest("free qpair");
         spdk_nvme_ctrlr_free_io_qpair(ns_entry->qpair);
-        logger.endTest("free qpair");
         
     }
 

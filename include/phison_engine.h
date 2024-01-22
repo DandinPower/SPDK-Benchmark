@@ -1,4 +1,4 @@
-
+#pragma once
 extern "C" {
 	#include "spdk/stdinc.h"
 
@@ -10,11 +10,12 @@ extern "C" {
 	#include "spdk/log.h"
 	#include "spdk/env_dpdk.h"
 }
+
+#include <config.h>
 #include <chrono>
 #include <vector>
 #include <mutex>
 #define DATA_BUFFER_STRING "Hello world!"
-#define CHUNK_SIZE 33554432 / 8
 // #define CHUNK_SIZE 0x2000000
 #define ALIGN_SIZE 4096 // 4KB
 

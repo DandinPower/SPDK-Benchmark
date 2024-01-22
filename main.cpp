@@ -1,5 +1,6 @@
 // #include <spdk_engine.h>
 #include <phison_engine.h>
+#include <config.h>
 #include <iostream>
 #include <cstring>
 #include <chrono>
@@ -32,7 +33,7 @@ main(int argc, char **argv)
 	double totalWriteLatency = 0.0;
     double totalReadLatency = 0.0;
 
-	size_t bufferSize = 134217728;
+	size_t bufferSize = BUFFER_SIZE;
 	size_t bufferSizeAligned = get_aligned_size(NVME_SECTOR_SIZE , bufferSize);
 
     // Allocate aligned memory for write and read
