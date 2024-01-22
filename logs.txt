@@ -1,0 +1,48 @@
+Buffer Size: 33554432
+Test Round: 512
+
+CHUNK_SIZE 33554432
+Avg Write speed: 2879 MB/s
+Avg Read speed: 3313 MB/s
+
+CHUNK_SIZE 33554432 / 2
+Avg Write speed: 4754 MB/s
+Avg Read speed: 4762 MB/s
+
+CHUNK_SIZE 33554432 / 4
+Avg Write speed: 4727 MB/s
+Avg Read speed: 4770 MB/s
+
+CHUNK_SIZE 33554432 / 8
+Avg Write speed: 4420 MB/s
+Avg Read speed: 5131 MB/s
+
+CHUNK_SIZE 33554432 / 16
+Avg Write speed: 3546 MB/s
+Avg Read speed: 4080 MB/s
+
+-----------------------------------
+
+Buffer Size: 33554432 * 4
+Test Round: 512
+CHUNK_SIZE 33554432 / 8
+IO QUEUE = 128
+IO QUEUE Request = 256
+Avg Write speed: 4109 MB/s
+Avg Read speed: 4669 MB/s
+
+Buffer Size: 33554432 * 4
+Test Round: 512
+CHUNK_SIZE 33554432 / 8
+IO QUEUE = 256
+IO QUEUE Request = 512
+Avg Write speed: 4118 MB/s
+Avg Read speed: 4664 MB/s
+
+Buffer Size: 33554432 * 4
+Test Round: 512
+CHUNK_SIZE 33554432 / 8
+IO QUEUE = 512
+IO QUEUE Request = 1024
+Avg Write speed: 2050 MB/s
+Avg Read speed: 2705 MB/s
