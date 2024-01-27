@@ -4,10 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <chrono>
-
-#define NVME_SECTOR_SIZE 512
-#define TEST_ROUNDS 1
-#define MB 1024 * 1024
+#include <utils.h>
 
 size_t get_aligned_size(size_t alignment, size_t size) {
     assert((alignment & (alignment - 1)) == 0);  // Ensure alignment is a power of 2
@@ -37,11 +34,18 @@ main(int argc, char **argv)
 	size_t bufferSizeAligned = get_aligned_size(NVME_SECTOR_SIZE , bufferSize);
 
     // Allocate aligned memory for write and read
-    char *writeBuffer, *readBuffer;
-    check_error(posix_memalign((void **)&writeBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for write_data");
-    check_error(posix_memalign((void **)&readBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for read_data");
-
+    // char *writeBuffer, *readBuffer;
+    // check_error(posix_memalign((void **)&writeBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for write_data");
+    // check_error(posix_memalign((void **)&readBuffer, NVME_SECTOR_SIZE, bufferSizeAligned), "posix_memalign error for read_data");
+	
+	char *writeBuffer = (char*) mem_allocation(bufferSizeAligned);
+	char *readBuffer = (char*) mem_allocation(bufferSizeAligned);
+	
+	// char *writeBuffer = (char*) mem_allocation(BUFFER_SIZE);
 	generate_random_data(writeBuffer, bufferSizeAligned);
+
+	// memset(writeBuffer, 0, BUFFER_SIZE);
+	// char *readBuffer = (char*) mem_allocation(bufferSizeAligned);
 
 	auto startWrite = std::chrono::high_resolution_clock::now();
 	int ret = processor(writeBuffer, 1, 0, bufferSizeAligned);
@@ -81,7 +85,9 @@ main(int argc, char **argv)
 	std::cout << "Avg Read speed: " << readSpeedMBs << " MB/s" << std::endl;
 
 	// Free allocated memory
-	free(writeBuffer);
-	free(readBuffer);
+	// free(writeBuffer);
+	// free(readBuffer);
+	mem_free(writeBuffer);
+	mem_free(readBuffer);
 	return 0;
 }

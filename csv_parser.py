@@ -20,7 +20,7 @@ class TaskProfile:
 
 all_task_profiles: list[TaskProfile] = []
 
-TEST_NAME = '128MB_4MB_write'
+TEST_NAME = '128MB_4MB_nonmemcpy_write'
 FOLDER_PATH = f'analysis'
 CSV_PATH = f'{FOLDER_PATH}/csv/{TEST_NAME}.csv'
 IMAGE_PATH = f'{FOLDER_PATH}/png/{TEST_NAME}.png'

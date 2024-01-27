@@ -1,8 +1,11 @@
 #pragma once
+#define MB 1024 * 1024
+#define NVME_SECTOR_SIZE 512
+
+#define TEST_ROUNDS 1
 
 #define BUFFER_SIZE 134217728
 #define CHUNK_SIZE 33554432 / 8 // 4MB
-// #define CHUNK_SIZE 33554432 / 4 // 8MB
-// #define CHUNK_SIZE 33554432 / 2 // 16MB
-// #define CHUNK_SIZE 33554432 // 32MB
-// #define CHUNK_SIZE 33554432 * 2 // 64MB
+#define ALIGN_SIZE NVME_SECTOR_SIZE
+
+#define MEM_ALLOCATION_SPDK

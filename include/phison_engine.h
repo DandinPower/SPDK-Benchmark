@@ -17,7 +17,6 @@ extern "C" {
 #include <mutex>
 #define DATA_BUFFER_STRING "Hello world!"
 // #define CHUNK_SIZE 0x2000000
-#define ALIGN_SIZE 4096 // 4KB
 
 static TAILQ_HEAD(, ctrlr_entry) g_controllers = TAILQ_HEAD_INITIALIZER(g_controllers);
 static TAILQ_HEAD(, ns_entry) g_namespaces = TAILQ_HEAD_INITIALIZER(g_namespaces);
@@ -59,6 +58,8 @@ static bool probe_cb(void *cb_ctx, const struct spdk_nvme_transport_id *trid, st
 static void attach_cb(void *cb_ctx, const struct spdk_nvme_transport_id *trid, struct spdk_nvme_ctrlr *ctrlr, const struct spdk_nvme_ctrlr_opts *opts);
 static void cleanup(void);
 int processor(void *buffer, __u16 op, __u64 lba, __u64 size);
+void* mem_allocation(size_t size);
+void mem_free(void* buffer);
 
 #include <map>
 #include <iostream>
