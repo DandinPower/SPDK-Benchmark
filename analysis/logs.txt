@@ -1,48 +1,146 @@
-Buffer Size: 33554432
-Test Round: 512
+Experiments 1 (Test on different chunk size)
+Common Configurations
+    1. Buffer Size: 32MB
+    2. Mem copy: 1
+    3. Mem allocation: posix align
 
-CHUNK_SIZE 33554432
-Avg Write speed: 2879 MB/s
-Avg Read speed: 3313 MB/s
+Test Case 0
+Configurations
+    1. CHUNK_SIZE 32MB
+Result 
+    - Avg Write speed: 2879 MB/s
+    - Avg Read speed: 3313 MB/s
 
-CHUNK_SIZE 33554432 / 2
-Avg Write speed: 4754 MB/s
-Avg Read speed: 4762 MB/s
+Test Case 1
+Configurations
+    1. CHUNK_SIZE 16MB
+Result 
+    - Avg Write speed: 4754 MB/s
+    - Avg Read speed: 4762 MB/s
 
-CHUNK_SIZE 33554432 / 4
-Avg Write speed: 4727 MB/s
-Avg Read speed: 4770 MB/s
+Test Case 2
+Configurations
+    1. CHUNK_SIZE 8MB
+Result 
+    - Avg Write speed: 4727 MB/s
+    - Avg Read speed: 4770 MB/s
 
-CHUNK_SIZE 33554432 / 8
-Avg Write speed: 4420 MB/s
-Avg Read speed: 5131 MB/s
+Test Case 3
+Configurations
+    1. CHUNK_SIZE 4MB
+Result 
+    - Avg Write speed: 4420 MB/s
+    - Avg Read speed: 5131 MB/s
 
-CHUNK_SIZE 33554432 / 16
-Avg Write speed: 3546 MB/s
-Avg Read speed: 4080 MB/s
-
+Test Case 4
+Configurations
+    1. CHUNK_SIZE 2MB
+Result 
+    - Avg Write speed: 3546 MB/s
+    - Avg Read speed: 4080 MB/s
 -----------------------------------
+Experiments 2 (Test on different io queue size)
+Common Configurations
+    1. Buffer Size: 128MB
+    2. Chunk size: 4MB
+    2. Mem copy: 1
+    3. Mem allocation: posix align
 
-Buffer Size: 33554432 * 4
-Test Round: 512
-CHUNK_SIZE 33554432 / 8
 IO QUEUE = 128
 IO QUEUE Request = 256
 Avg Write speed: 4109 MB/s
 Avg Read speed: 4669 MB/s
 
-Buffer Size: 33554432 * 4
-Test Round: 512
-CHUNK_SIZE 33554432 / 8
 IO QUEUE = 256
 IO QUEUE Request = 512
 Avg Write speed: 4118 MB/s
 Avg Read speed: 4664 MB/s
 
-Buffer Size: 33554432 * 4
-Test Round: 512
-CHUNK_SIZE 33554432 / 8
 IO QUEUE = 512
 IO QUEUE Request = 1024
 Avg Write speed: 2050 MB/s
 Avg Read speed: 2705 MB/s
+
+-----------------------------------
+
+mem cpy: 0
+mem allocation: spdk
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 4MB
+Avg Write speed: 6424 MB/s
+Avg Read speed: 6370 MB/s
+
+mem cpy: 1
+mem allocation: spdk
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 4MB
+Avg Write speed: 4032 MB/s
+Avg Read speed: 4495 MB/s
+
+mem cpy: 1
+mem allocation: huge page
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 4MB
+Avg Write speed: 4008 MB/s
+Avg Read speed: 4491 MB/s
+
+mem cpy: 1
+mem allocation: posix align
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 4MB
+Avg Write speed: 4004 MB/s
+Avg Read speed: 4501 MB/s
+
+--------------------------------------
+
+mem cpy: 0
+mem allocation: spdk
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 32MB
+Avg Write speed: 6446 MB/s
+Avg Read speed: 6377 MB/s
+
+mem cpy: 0
+mem allocation: spdk
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 16MB
+Avg Write speed: 6461 MB/s
+Avg Read speed: 6388 MB/s
+
+mem cpy: 0
+mem allocation: spdk
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 8MB
+Avg Write speed: 6452 MB/s
+Avg Read speed: 6371 MB/s
+
+mem cpy: 1
+mem allocation: posix align
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 8MB
+Avg Write speed: 4403 MB/s
+Avg Read speed: 4998 MB/s
+
+mem cpy: 1
+mem allocation: posix align
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 16MB
+Avg Write speed: 4561 MB/s
+Avg Read speed: 5006 MB/s
+
+mem cpy: 1
+mem allocation: posix align
+Buffer Size: 128MB
+Test Round: 100
+Chunk size: 32MB
+Avg Write speed: 4686 MB/s
+Avg Read speed: 4950 MB/s
